@@ -9,9 +9,13 @@ export default defineConfig(({mode})=>{
  return {root:resolve('pages'),base:'./',publicDir:resolve('public'),resolve:{alias:{'@':process.cwd()}},plugins:[{
  name:'pages-adapter',enforce:'pre',transform(source,id){
  if(id.endsWith('/app/page.tsx')){
- source=source.replace("function track(event:string){void fetch('/api/events',",origin?`function track(event:string){void fetch(${JSON.stringify(origin+'/api/events')},`:"function track(event:string){return;void fetch('/api/events',");
+ source=source.replace(/function track\(event:string\)\{[^\n]+\}/,'function track(event:string){trackUsage(event);}');
+ source='import {trackUsage,UsageConsent} from "@/pages/usage";\n'+source;
+ source=source.replace('<main className={kind', '<UsageConsent/><main className={kind');
+ source=source.replace(/<p><strong>Privacy:<\/strong>[\s\S]*?<\/p>/,'<p><strong>Privacy:</strong> Chat contents, filenames, participant names and relationship type stay in this tab until you clear the chat or close/reload the page. Optional Google Analytics records visits and named feature-use events only after you allow it. It uses cookies and collects technical browser/device information; we do not send conversation text or statistics. You can change your choice above. If no Measurement ID is configured, no Google Analytics is loaded. Hosting infrastructure may separately keep operational request logs.</p>');
+
  source=source.replaceAll('href="/analytics"','href="./?view=analytics"').replaceAll('href="/"','href="./"');
- if(!origin)source=source.replace('Anonymous event counters record page loads, import success/failure, demo use and filter use.','Usage tracking is not connected on this GitHub Pages deployment. When configured, anonymous event counters record page loads, import success/failure, demo use and filter use.');
+
  }
  if(id.endsWith('/app/analytics/page.tsx')){
  source=source.replace("async function refresh(){",origin?'async function refresh(){':"async function refresh(){setError('Usage tracking needs a separate analytics backend. It is not connected to this GitHub Pages deployment yet.');return;");

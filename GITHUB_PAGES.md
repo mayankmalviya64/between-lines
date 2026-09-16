@@ -1,20 +1,13 @@
 # GitHub Pages deployment
 
-The Pages build reuses the current chat dashboard and parser. It runs entirely in the browser. No uploaded chats or secret values belong in this repository.
+Live site: https://mayankmalviya64.github.io/between-lines/
 
-## Publish
+Pushes to main build and deploy through GitHub Actions. Settings → Pages must use GitHub Actions. Build locally with `pnpm build` (output: pages-dist).
 
-1. Create `mayankmalviya64/between-lines` and initialise it with a README.
-2. Upload the project source, excluding node_modules, .env, .sites-runtime, .git, and build output.
-3. In Settings → Pages, choose GitHub Actions as the source.
-4. The included workflow builds and deploys the site on pushes to main.
+## Usage tracking
 
-Build locally: `pnpm exec vite build --config vite.pages.config.ts`. Output: `pages-dist`.
+Google Analytics 4 integration is prepared but inactive until a Measurement ID is configured. See ANALYTICS_SETUP.md. There is no analytics backend to deploy. Uploaded chats are processed locally and must never be committed.
 
-## Analytics migration is still required
+## AI recommendations
 
-GitHub Pages cannot execute the included server API routes or host D1. The current private Sites deployment continues operating independently.
-
-The Pages adapter accepts the repository variable `PAGES_ANALYTICS_ORIGIN` for a separately deployed compatible backend. That backend must allow the exact Pages origin via CORS (including OPTIONS and Authorization for owner analytics), keep the admin key server-side, and remain accessible to intended visitors. The private Sites URL is not a working public analytics backend. Do not set this variable to it without completing that migration.
-
-Until that backend is ready, the Pages build explicitly reports analytics as unconnected and sends no tracking events. The existing Sites deployment and its data are unchanged. AI generation is also unconnected, as before.
+Current recommendations use local rules, not an AI API. A future AI integration requires a separate server endpoint to protect its API key, explicit visitor consent and a minimized summary payload. Never place an AI API key in this public repository or its browser bundle.
