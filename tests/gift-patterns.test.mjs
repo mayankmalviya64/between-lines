@@ -4,7 +4,7 @@ import assert from 'node:assert/strict';
 import ts from 'typescript';
 const source=await readFile(new URL('../lib/gift-patterns.ts',import.meta.url),'utf8');
 const compiled=ts.transpileModule(source,{compilerOptions:{target:ts.ScriptTarget.ES2022,module:ts.ModuleKind.ESNext}}).outputText;
-const {cleanGiftChat,replyBuckets,giftPatterns,repliesWithin,snapReplyMinutes}=await import('data:text/javascript;base64,'+Buffer.from(compiled).toString('base64'));
+const {cleanGiftChat,replyBuckets,giftPatterns,repliesWithin,snapReplyMinutes,cumulativeReplyRows}=await import('data:text/javascript;base64,'+Buffer.from(compiled).toString('base64'));
 test('reply bands count every boundary once',()=>{
  const replies=[0,.99,1,4.99,5,9.99,10,29.99,30,119.99,120,360];
  assert.deepEqual(replyBuckets(replies).map(b=>b.count),[2,2,2,2,2,2]);
@@ -38,4 +38,13 @@ test('slider percentages are cumulative, inclusive, and handle empty samples',()
 test('drag steps preserve short windows, round by five, and stay in range',()=>{
  assert.deepEqual([1,2,3,7,8,12,13,178,359,360].map(snapReplyMinutes),[1,2,5,5,10,10,15,180,360,360]);
  assert.equal(snapReplyMinutes(-1),1);assert.equal(snapReplyMinutes(500),360);
+});
+
+test('card rows are cumulative and match slider percentages at every preset',()=>{
+ const replies=[0,1,2,5,10,30,60,120,360];
+ const rows=cumulativeReplyRows(replies);
+ assert.deepEqual(rows.map(row=>row.count),[2,4,5,6,7,8,9]);
+ assert.deepEqual(rows.map(row=>row.percent),[22.2,44.4,55.6,66.7,77.8,88.9,100]);
+ for(const row of rows){const slider=repliesWithin(replies,row.minutes);assert.equal(row.count,slider.count);assert.equal(row.percent,slider.percent);}
+ assert(cumulativeReplyRows([]).every(row=>row.count===0&&row.percent===null));
 });

@@ -13,6 +13,9 @@ export function repliesWithin(replies:number[],minutes:number){
  const count=replies.filter(reply=>reply<=minutes).length;
  return {count,total:replies.length,percent:replies.length?Math.round(count/replies.length*1000)/10:null};
 }
+// Card rows use the very same inclusive counts and rounding as the slider dials.
+export const replyWindows=[{label:'Within 1 min',minutes:1,icon:'⚡'},{label:'Within 5 min',minutes:5,icon:'🚀'},{label:'Within 10 min',minutes:10,icon:'🛵'},{label:'Within 30 min',minutes:30,icon:'☕'},{label:'Within 1 hr',minutes:60,icon:'🌤️'},{label:'Within 2 hr',minutes:120,icon:'🌆'},{label:'Within 6 hr',minutes:360,icon:'🌙'}];
+export function cumulativeReplyRows(replies:number[]){return replyWindows.map(window=>({...window,...repliesWithin(replies,window.minutes)}));}
 const wordPattern=/[\p{L}\p{N}]+(?:[’'][\p{L}\p{N}]+)*/gu;
 export function giftPatterns(messages:Message[]){
  // A new exchange begins after six hours; the export's unfinished last exchange has no closing.
