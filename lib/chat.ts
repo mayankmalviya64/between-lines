@@ -43,12 +43,26 @@ export const isText=(s:string)=>!/(<media omitted>|image omitted|video omitted|a
 export const words=(s:string)=>s.trim().split(/\s+/u).filter(Boolean).length;
 const warm=/\b(thank(s| you)?|appreciate|proud of you|well done|take care|here for you|you got this|shukriya|dhanyavaad)\b|🤗|🙏/iu;
 const affection=/\b(love you|miss you|darling|sweetheart|babe|baby|jaan|pyaar|ily)\b|❤️|💕|😘|🥰/iu;
-export function analyse(all:Message[],start:number,end:number,maxGap:number,night:boolean){
+// Compare real local-time intervals so minute-level settings and midnight
+// crossings work correctly. Equal start/end times mean no excluded period.
+export function overlapsExcludedPeriod(from:number,to:number,startMinute:number,endMinute:number){
+ if(startMinute===endMinute||to<=from)return false;
+ const day=new Date(from);day.setHours(0,0,0,0);day.setDate(day.getDate()-1);
+ while(+day<=to){
+  const begins=new Date(day);begins.setHours(Math.floor(startMinute/60),startMinute%60,0,0);
+  const ends=new Date(day);ends.setHours(Math.floor(endMinute/60),endMinute%60,0,0);
+  if(endMinute<startMinute)ends.setDate(ends.getDate()+1);
+  if(from<+ends&&to>+begins)return true;
+  day.setDate(day.getDate()+1);
+ }
+ return false;
+}
+export function analyse(all:Message[],start:number,end:number,maxGap:number,night:boolean,excludeStart=23*60,excludeEnd=7*60){
  const names=[...new Set(all.map(m=>m.who))];const filtered=all.filter(m=>m.at>=start&&m.at<=end);const turns:{who:string;first:number;last:number;count:number;text:string;lastText:string}[]=[];
  for(const m of all){const last=turns.at(-1);if(last&&last.who===m.who&&m.at-last.last<6*3600000){last.last=m.at;last.lastText=m.text;last.count+=isText(m.text)?words(m.text):0;}else turns.push({who:m.who,first:m.at,last:m.at,count:isText(m.text)?words(m.text):0,text:m.text,lastText:m.text});}
  const stats=names.map(who=>{const msgs=filtered.filter(m=>m.who===who),txt=msgs.filter(m=>isText(m.text));const replies:number[]=[];const openers:Record<string,number>=Object.create(null);const closers:Record<string,number>=Object.create(null);let starts=0;
  turns.forEach((t,i)=>{const next=turns[i+1];if(t.who===who&&t.last>=start&&t.last<=end&&next&&next.first-t.last>=6*3600000&&isText(t.lastText)){const word=t.lastText.match(/[\p{L}\p{N}]+(?:[’'][\p{L}\p{N}]+)*/gu)?.at(-1)?.toLocaleLowerCase();if(word)closers[word]=(closers[word]||0)+1;}if(t.who!==who||t.first<start||t.first>end)return;const p=turns[i-1];if(!p||t.first-p.last>=6*3600000){starts++;if(isText(t.text)){const word=t.text.match(/[\p{L}\p{N}]+(?:[’'][\p{L}\p{N}]+)*/u)?.[0].toLocaleLowerCase();if(word)openers[word]=(openers[word]||0)+1;}}if(!p||p.who===who||p.last<start)return;const gap=(t.first-p.last)/60000;if(gap>maxGap)return;
- if(night){let cursor=new Date(p.last);cursor.setMinutes(0,0,0);let overlaps=false;while(+cursor<=t.first){if(cursor.getHours()<7||cursor.getHours()>=23){overlaps=true;break;}cursor.setHours(cursor.getHours()+1);}if(overlaps)return;}replies.push(gap);});
+ if(night&&overlapsExcludedPeriod(p.last,t.first,excludeStart,excludeEnd))return;replies.push(gap);});
  const sorted=[...replies].sort((a,b)=>a-b),len=sorted.length;const median=len?(sorted[Math.floor((len-1)/2)]+sorted[Math.floor(len/2)])/2:null;
  const ownTurns=turns.filter(t=>t.who===who&&t.first>=start&&t.last<=end);
  return {who,closers:Object.entries(closers).sort((a,b)=>b[1]-a[1]||a[0].localeCompare(b[0])).slice(0,5),closerCount:Object.values(closers).reduce((s,n)=>s+n,0),openers:Object.entries(openers).sort((a,b)=>b[1]-a[1]||a[0].localeCompare(b[0])).slice(0,5),openerCount:Object.values(openers).reduce((s,n)=>s+n,0),messages:msgs.length,texts:txt.length,words:txt.reduce((s,m)=>s+words(m.text),0),detail:txt.filter(m=>words(m.text)>=20).length,questions:txt.filter(m=>/[?？]/.test(m.text)).length,warm:txt.filter(m=>warm.test(m.text)).length,affection:txt.filter(m=>affection.test(m.text)).length,days:new Set(msgs.map(m=>new Date(m.at).toDateString())).size,starts,replies,median,turnWords:ownTurns.length?ownTurns.reduce((s,t)=>s+t.count,0)/ownTurns.length:0};});
