@@ -22,5 +22,6 @@ test('six-hour pauses attribute first and last words; the unfinished final excha
  const a=result.people.find(p=>p.who==='A'),b=result.people.find(p=>p.who==='B');
  assert.equal(a.starts,2);assert.equal(a.endings,0);assert.equal(b.starts,1);assert.equal(b.endings,2);
  assert.equal(a.openers[0].word,'hello');assert.equal(a.openers[0].count,2);assert.equal(a.openers[0].hour,8);
- assert.equal(b.closers[0].word,'soon');assert.equal(b.closers[0].count,2);assert.equal(b.closers.some(p=>p.word==='friend'),false);
+ assert.deepEqual(a.openers[0].examples,[{text:'Hello there',at:time(8)},{text:'Hello again',at:time(15)}]);
+ assert.equal(b.closers[0].word,'soon');assert.equal(b.closers[0].count,2);assert.deepEqual(b.closers[0].examples,[{text:'See you soon',at:time(9)}]);assert.equal(b.closers.some(p=>p.word==='friend'),false);
 });
