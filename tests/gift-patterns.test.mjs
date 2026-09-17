@@ -4,7 +4,7 @@ import assert from 'node:assert/strict';
 import ts from 'typescript';
 const source=await readFile(new URL('../lib/gift-patterns.ts',import.meta.url),'utf8');
 const compiled=ts.transpileModule(source,{compilerOptions:{target:ts.ScriptTarget.ES2022,module:ts.ModuleKind.ESNext}}).outputText;
-const {cleanGiftChat,replyBuckets,giftPatterns,repliesWithin}=await import('data:text/javascript;base64,'+Buffer.from(compiled).toString('base64'));
+const {cleanGiftChat,replyBuckets,giftPatterns,repliesWithin,snapReplyMinutes}=await import('data:text/javascript;base64,'+Buffer.from(compiled).toString('base64'));
 test('reply bands count every boundary once',()=>{
  const replies=[0,.99,1,4.99,5,9.99,10,29.99,30,119.99,120,360];
  assert.deepEqual(replyBuckets(replies).map(b=>b.count),[2,2,2,2,2,2]);
@@ -33,4 +33,9 @@ test('slider percentages are cumulative, inclusive, and handle empty samples',()
  assert.deepEqual(repliesWithin(replies,10),{count:5,total:6,percent:83.3});
  assert.deepEqual(repliesWithin(replies,360),{count:6,total:6,percent:100});
  assert.deepEqual(repliesWithin([],5),{count:0,total:0,percent:null});
+});
+
+test('drag steps preserve short windows, round by five, and stay in range',()=>{
+ assert.deepEqual([1,2,3,7,8,12,13,178,359,360].map(snapReplyMinutes),[1,2,5,5,10,10,15,180,360,360]);
+ assert.equal(snapReplyMinutes(-1),1);assert.equal(snapReplyMinutes(500),360);
 });

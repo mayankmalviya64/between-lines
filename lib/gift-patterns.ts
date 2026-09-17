@@ -28,3 +28,9 @@ export function giftPatterns(messages:Message[]){
  }
  return {completed:ends.length,people:[...new Set(messages.map(m=>m.who))].map(who=>({who,starts:starts.filter(m=>m.who===who).length,endings:ends.filter(m=>m.who===who).length,openers:phrases(starts,who,false),closers:phrases(ends,who,true)}))};
 }
+
+// Keep the first two minutes available; larger drag values settle on round steps.
+export function snapReplyMinutes(minutes:number){
+ const bounded=Math.max(1,Math.min(360,minutes));
+ return bounded<=2?Math.round(bounded):Math.max(5,Math.round(bounded/5)*5);
+}
