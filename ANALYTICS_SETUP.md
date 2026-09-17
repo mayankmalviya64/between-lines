@@ -26,3 +26,11 @@ Enhanced measurement independently adds applicable automatic events, including s
 ## Acceptance checks after configuration
 
 Before consent or after declining, no Google Analytics script should be loaded on a fresh visit. After consent, named events should appear in Realtime. Withdrawing prevents further events without clearing the chat. No Measurement ID or blocked storage means collection stays off.
+
+## Live verification — 2026-09-17
+
+Verified the standalone Between Lines account and property in Google Analytics. The web stream matches `G-T312558HVQ` and reports **Data flowing** and **Data collection is active in the past 48 hours**. Enhanced measurement is enabled.
+
+After allowing analytics on the deployed site, opening the sample, and changing a filter, Realtime showed one active user and the events `page_view`, `demo_opened`, and `filter_used`, alongside automatic session events. The deployed JavaScript matched a successful local production build.
+
+Chrome's test visit was blocked with `net::ERR_BLOCKED_BY_CLIENT` when loading the Google tag. A separate Safari test produced the Realtime events. Browser blockers can exclude otherwise consented visits; this is expected and does not require a site change.
