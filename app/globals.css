@@ -37,3 +37,14 @@ header{background:#fffdf5}.mark{background:#f3bc25;color:#49360d;border-radius:1
 .reply-stop>div{padding-left:18px}
 
 .signoff-appreciation{margin:22px 0 0;text-align:center;color:#78540e;font-family:Georgia,serif;font-size:18px;line-height:1.7}
+
+/* Center the gift signature on both phones and laptops. */
+.gift-main .footer{justify-content:center;align-items:center;text-align:center}
+/* Phone-only adjustments preserve the existing laptop layout. */
+@media(max-width:500px){
+ .gift-main .reply-dials{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .gift-main .reply-dial{width:min(125px,100%);height:auto;aspect-ratio:1}
+ .gift-main .reply-dial svg{display:block}
+ .gift-main .reply-presets button,.gift-main .caption-change{min-height:44px}
+ .gift-main .caption-option{overflow-wrap:anywhere}
+}
