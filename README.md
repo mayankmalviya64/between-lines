@@ -12,6 +12,6 @@ In **Settings → Pages**, select **GitHub Actions** as the source. Run the **De
 
 ## Analytics status
 
-Usage tracking requires a separate server backend and is not yet connected for this Pages deployment. The existing private deployment remains independent. See GITHUB_PAGES.md. AI-generated insights are not connected; suggestions are transparently rule-based.
+Google Analytics is connected for the Pages deployment and requires visitor consent; see ANALYTICS_SETUP.md. Optional Cloudflare AI integration is prepared for the rolling last three calendar months, requires separate consent to send message text, and stays disabled until its Worker origin is configured. Local suggestions remain available. See AI_SETUP.md and GITHUB_PAGES.md.
 
 Chats remain in browser memory; never commit exports, names, secrets or admin keys.
