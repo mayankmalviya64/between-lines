@@ -33,7 +33,8 @@ export class PollMailbox{
    const count=quota?.day===day?quota.count:0;if(count>=20)return json({error:'Today’s notification limit has been reached.'},429);
    await this.state.storage.put('quota',{day,count:count+1});
    try{
-    const response=await fetch('https://formsubmit.co/ajax/'+encodeURIComponent(this.env.NOTIFY_EMAIL),{method:'POST',headers:{'Content-Type':'application/json','Accept':'application/json'},body:JSON.stringify({_subject:'A poll choice from Two People, Too Busy? 👀',_captcha:'false',_template:'table',_url:origin+'/muskan-is-very-busyy/',option:option.id,chosen_caption:option.text,source:'A visitor to the unlocked gift chose this caption.'}),signal:AbortSignal.timeout(12000)});
+    // FormSubmit requires the originating website even when a Worker forwards the form.
+    const response=await fetch('https://formsubmit.co/ajax/'+encodeURIComponent(this.env.NOTIFY_EMAIL),{method:'POST',headers:{'Content-Type':'application/json','Accept':'application/json','Origin':origin,'Referer':origin+'/muskan-is-very-busyy/'},body:JSON.stringify({_subject:'A poll choice from Two People, Too Busy? 👀',_captcha:'false',_template:'table',_url:origin+'/muskan-is-very-busyy/',option:option.id,chosen_caption:option.text,source:'A visitor to the unlocked gift chose this caption.'}),signal:AbortSignal.timeout(12000)});
     const result=await response.json() as {success?:boolean|string;message?:string};
     if(!response.ok||!(result.success===true||result.success==='true')||/activat|confirm your email/i.test(result.message||''))return json({error:'The email could not be submitted. Please try again.'},502);
     await this.state.storage.put(recordKey,{optionId:vote.optionId,sent:true});return json({ok:true});

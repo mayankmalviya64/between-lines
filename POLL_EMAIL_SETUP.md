@@ -17,8 +17,8 @@ They retain submitted form data for 30 days; this payload includes only the sele
 caption, option number, site URL and generic source text.
 
 Pending activation:
-1. Obtain the recipient address and set NOTIFY_EMAIL through Wrangler secret stdin.
-2. Send a clearly marked setup test to trigger FormSubmit verification.
+1. Recipient secret configured through Wrangler stdin (completed).
+2. Setup test triggered the activation email (completed); recipient must click Activate Form.
 3. Confirm the verification email and test real delivery to the inbox.
 4. Set EMAIL_READY to true in wrangler.poll.jsonc and deploy the backend.
 5. Build and publish the gift bundle and encrypted payload together.
