@@ -31,3 +31,7 @@ The AI feature stays disabled if no origin is configured. Cancelling aborts the 
 `npm run build`, `npx tsc --noEmit`, `node --test tests/ai.test.mjs`, and `npx wrangler deploy --config wrangler.ai.jsonc --dry-run` validate the browser build, types, date/consent/backend safeguards, and Worker packaging. Live Cloudflare inference must be verified separately after account authentication.
 
 Sources: [model](https://developers.cloudflare.com/workers-ai/models/gpt-oss-120b/), [pricing](https://developers.cloudflare.com/workers-ai/platform/pricing/), [data policy](https://developers.cloudflare.com/workers-ai/platform/data-usage/).
+
+## Live verification — 2026-09-17
+
+Worker deployed at `https://between-lines-ai.mayankmalviya64.workers.dev`; GitHub Pages origin configured and website deployed. Synthetic four-message inference returned HTTP 200 with validated insights. Missing consent and old messages returned HTTP 400. Browser consent starts unchecked and disables inference until selected. The full 594-message synthetic sample returned HTTP 502 on output validation; increasing output headroom did not resolve it. The conservative daily app budget then returned HTTP 429 and was not reset. Full-sample reliability remains unresolved and must be investigated after the next UTC-day budget reset; do not describe this as fully verified for long conversations. No real visitor chats were used in verification.
