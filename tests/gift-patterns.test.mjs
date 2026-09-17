@@ -28,9 +28,9 @@ test('six-hour pauses attribute first and last words; the unfinished final excha
 
 test('slider percentages are cumulative, inclusive, and handle empty samples',()=>{
  const replies=[0,1,2,5,10,30];
- assert.deepEqual(repliesWithin(replies,1),{count:2,total:6,percent:33.3});
- assert.deepEqual(repliesWithin(replies,5),{count:4,total:6,percent:66.7});
- assert.deepEqual(repliesWithin(replies,10),{count:5,total:6,percent:83.3});
+ assert.deepEqual(repliesWithin(replies,1),{count:2,total:6,percent:33});
+ assert.deepEqual(repliesWithin(replies,5),{count:4,total:6,percent:67});
+ assert.deepEqual(repliesWithin(replies,10),{count:5,total:6,percent:83});
  assert.deepEqual(repliesWithin(replies,360),{count:6,total:6,percent:100});
  assert.deepEqual(repliesWithin([],5),{count:0,total:0,percent:null});
 });
@@ -44,7 +44,7 @@ test('card rows are cumulative and match slider percentages at every preset',()=
  const replies=[0,1,2,5,10,30,60,120,360];
  const rows=cumulativeReplyRows(replies);
  assert.deepEqual(rows.map(row=>row.count),[2,4,5,6,7,8,9]);
- assert.deepEqual(rows.map(row=>row.percent),[22.2,44.4,55.6,66.7,77.8,88.9,100]);
+ assert.deepEqual(rows.map(row=>row.percent),[22,44,56,67,78,89,100]);
  for(const row of rows){const slider=repliesWithin(replies,row.minutes);assert.equal(row.count,slider.count);assert.equal(row.percent,slider.percent);}
  assert(cumulativeReplyRows([]).every(row=>row.count===0&&row.percent===null));
 });
