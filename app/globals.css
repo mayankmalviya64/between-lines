@@ -35,3 +35,5 @@ header{background:#fffdf5}.mark{background:#f3bc25;color:#49360d;border-radius:1
 .reply-cup-slot{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);display:grid;place-items:center;width:28px;min-height:28px;pointer-events:none}
 
 .reply-stop>div{padding-left:18px}
+
+.signoff-appreciation{margin:22px 0 0;text-align:center;color:#78540e;font-family:Georgia,serif;font-size:18px;line-height:1.7}
