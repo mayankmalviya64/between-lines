@@ -48,3 +48,9 @@ header{background:#fffdf5}.mark{background:#f3bc25;color:#49360d;border-radius:1
  .gift-main .reply-presets button,.gift-main .caption-change{min-height:44px}
  .gift-main .caption-option{overflow-wrap:anywhere}
 }
+
+/* Explain the garden symbols without crowding the heading on small screens. */
+.garden-heading{display:flex;justify-content:space-between;align-items:flex-start;gap:20px;flex-wrap:wrap}
+.garden-legend{display:flex;gap:8px 14px;flex-wrap:wrap;justify-content:flex-end;margin-left:auto;color:#786b50;font-size:12px;max-width:240px;line-height:1.8}
+.garden-legend span{white-space:nowrap}
+@media(max-width:600px){.garden-legend{margin-left:0;max-width:none;justify-content:flex-start}.garden-heading{gap:0}}
