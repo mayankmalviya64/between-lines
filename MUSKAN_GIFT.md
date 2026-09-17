@@ -19,3 +19,5 @@ This is passcode protection, not identity verification or account authentication
 
 The encrypted payload contains the supplied chat and a welcome letter.
 Live address: https://mayankmalviya64.github.io/muskan-is-very-busyy/
+
+Passcodes ignore case, whitespace, punctuation, and emoji; letters and digits must match.
