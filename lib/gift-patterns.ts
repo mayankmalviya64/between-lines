@@ -8,6 +8,11 @@ export function cleanGiftChat(messages:Message[]){
 }
 export const replyStops=[{label:'Under 1 min',min:0,max:1,icon:'⚡'},{label:'1–5 min',min:1,max:5,icon:'🚀'},{label:'5–10 min',min:5,max:10,icon:'🛵'},{label:'10–30 min',min:10,max:30,icon:'☕'},{label:'30 min–2 hr',min:30,max:120,icon:'🌤️'},{label:'2–6 hr',min:120,max:Infinity,icon:'🌙'}];
 export function replyBuckets(replies:number[]){return replyStops.map(stop=>({...stop,count:replies.filter(minutes=>minutes>=stop.min&&minutes<stop.max).length}));}
+// “Within” is cumulative and includes replies exactly at the selected minute.
+export function repliesWithin(replies:number[],minutes:number){
+ const count=replies.filter(reply=>reply<=minutes).length;
+ return {count,total:replies.length,percent:replies.length?Math.round(count/replies.length*1000)/10:null};
+}
 const wordPattern=/[\p{L}\p{N}]+(?:[’'][\p{L}\p{N}]+)*/gu;
 export function giftPatterns(messages:Message[]){
  // A new exchange begins after six hours; the export's unfinished last exchange has no closing.

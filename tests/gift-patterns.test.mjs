@@ -4,7 +4,7 @@ import assert from 'node:assert/strict';
 import ts from 'typescript';
 const source=await readFile(new URL('../lib/gift-patterns.ts',import.meta.url),'utf8');
 const compiled=ts.transpileModule(source,{compilerOptions:{target:ts.ScriptTarget.ES2022,module:ts.ModuleKind.ESNext}}).outputText;
-const {cleanGiftChat,replyBuckets,giftPatterns}=await import('data:text/javascript;base64,'+Buffer.from(compiled).toString('base64'));
+const {cleanGiftChat,replyBuckets,giftPatterns,repliesWithin}=await import('data:text/javascript;base64,'+Buffer.from(compiled).toString('base64'));
 test('reply bands count every boundary once',()=>{
  const replies=[0,.99,1,4.99,5,9.99,10,29.99,30,119.99,120,360];
  assert.deepEqual(replyBuckets(replies).map(b=>b.count),[2,2,2,2,2,2]);
@@ -24,4 +24,13 @@ test('six-hour pauses attribute first and last words; the unfinished final excha
  assert.equal(a.openers[0].word,'hello');assert.equal(a.openers[0].count,2);assert.equal(a.openers[0].hour,8);
  assert.deepEqual(a.openers[0].examples,[{text:'Hello there',at:time(8)},{text:'Hello again',at:time(15)}]);
  assert.equal(b.closers[0].word,'soon');assert.equal(b.closers[0].count,2);assert.deepEqual(b.closers[0].examples,[{text:'See you soon',at:time(9)}]);assert.equal(b.closers.some(p=>p.word==='friend'),false);
+});
+
+test('slider percentages are cumulative, inclusive, and handle empty samples',()=>{
+ const replies=[0,1,2,5,10,30];
+ assert.deepEqual(repliesWithin(replies,1),{count:2,total:6,percent:33.3});
+ assert.deepEqual(repliesWithin(replies,5),{count:4,total:6,percent:66.7});
+ assert.deepEqual(repliesWithin(replies,10),{count:5,total:6,percent:83.3});
+ assert.deepEqual(repliesWithin(replies,360),{count:6,total:6,percent:100});
+ assert.deepEqual(repliesWithin([],5),{count:0,total:0,percent:null});
 });
