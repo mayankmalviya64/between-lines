@@ -1,9 +1,9 @@
 import {useRef,useState} from 'react';
 import {pollOptions as options} from '../lib/poll-options';
-import config from '../pages/poll-config.json';
 const storageKey='muskan-caption-pick-v1';
 export function CaptionPoll({token}:{token?:string}){
- // The chosen option ID is sent after a click; chat text and the passcode never leave this browser.
+ // Send only the chosen caption to FormSubmit. Its hidden form ID is inside the encrypted gift.
+ // No Gmail credentials, chat text, or passcode are sent; the Gmail address is receive-only.
  const [chosen,setChosen]=useState<number|null>(()=>{try{const saved=Number(localStorage.getItem(storageKey));return options.some(option=>option.id===saved)?saved:null;}catch{return null;}});
  const [status,setStatus]=useState<'idle'|'sending'|'sent'|'error'>('idle');
  const requestId=useRef('');
@@ -11,9 +11,10 @@ export function CaptionPoll({token}:{token?:string}){
  async function notify(id:number){
   setStatus('sending');
   try{
-   if(!token||!config.origin.startsWith('https://'))throw Error('Not configured');
-   const response=await fetch(config.origin+'/vote',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+token},body:JSON.stringify({optionId:id,requestId:requestId.current}),signal:AbortSignal.timeout(18000)});
-   const result=await response.json() as {ok?:boolean};if(!response.ok||result.ok!==true)throw Error('Notification failed');setStatus('sent');
+   if(!token||!/^[a-f0-9]{32}$/.test(token))throw Error('Not configured');
+   const option=options.find(option=>option.id===id);if(!option)throw Error('Invalid option');
+   const response=await fetch('https://formsubmit.co/ajax/'+token,{method:'POST',headers:{'Content-Type':'application/json',Accept:'application/json'},body:JSON.stringify({_subject:'A poll choice from Two People, Too Busy? 👀',_captcha:'false',_template:'table',_url:'https://mayankmalviya64.github.io/muskan-is-very-busyy/',option:id,chosen_caption:option.text,request_id:requestId.current,source:'A visitor to the unlocked gift chose this caption.'}),signal:AbortSignal.timeout(18000)});
+   const result=await response.json() as {success?:boolean|string};if(!response.ok||!(result.success===true||result.success==='true'))throw Error('Notification failed');setStatus('sent');
   }catch{setStatus('error');}
  }
  function pick(id:number|null){setChosen(id);setStatus('idle');try{if(id===null)localStorage.removeItem(storageKey);else localStorage.setItem(storageKey,String(id));}catch{}if(id!==null){requestId.current=crypto.randomUUID();void notify(id);}}

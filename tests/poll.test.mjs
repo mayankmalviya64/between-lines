@@ -24,7 +24,7 @@ test('only authenticated, allowed choices can reach the mail backend',async()=>{
 test('notification retries are idempotent, fixed-caption only, and failed email is not success',async()=>{
  const store=new Map();const state={blockConcurrencyWhile:fn=>fn(),storage:{get:async key=>store.get(key),put:async(key,value)=>store.set(key,value)}};
  const mailbox=new PollMailbox(state,env);let calls=0,payload;const original=globalThis.fetch;
- globalThis.fetch=async(url,init)=>{calls++;payload=JSON.parse(init.body);assert.equal(url,'https://formsubmit.co/ajax/recipient%40example.com');return Response.json({success:'true'});};
+ globalThis.fetch=async(url,init)=>{calls++;payload=Object.fromEntries(new URLSearchParams(init.body));assert.equal(url,'https://formsubmit.co/recipient%40example.com');return new Response('<h1>Thanks!</h1><p>The form was submitted successfully.</p>');};
  const vote=id=>new Request('https://internal/vote',{method:'POST',body:JSON.stringify({optionId:id,requestId:uuid})});
  try{
   assert.equal((await mailbox.fetch(vote(1))).status,200);assert.equal((await mailbox.fetch(vote(1))).status,200);assert.equal(calls,1);
