@@ -1,7 +1,7 @@
 # Poll email notifications
 
-The live gift sends only the selected caption, option number, request ID, site URL
-and generic visitor description to FormSubmit after a choice. Gmail is receive-only:
+The live gift sends only the selected caption, party verdict, request ID, site URL
+and generic visitor description to FormSubmit once both polls have answers, in one combined email. Gmail is receive-only:
 no Gmail sending credentials are present or used. FormSubmit sends the emails.
 
 The hidden FormSubmit form ID is stored inside both encrypted gift envelopes.
@@ -19,3 +19,6 @@ its receipt was checked in Gmail before publication.
 
 FormSubmit documentation: https://formsubmit.co/documentation
 FormSubmit retains submitted form data for 30 days. No chat content is included.
+
+Incomplete polls never send. A successful answer pair is remembered locally to avoid
+resending the same pair; changing an answer can send a new combined update.
