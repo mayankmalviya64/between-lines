@@ -1,6 +1,6 @@
 import React from 'react';
 import {createRoot} from 'react-dom/client';
-import Home from '../app/page';
-import {AnalyticsSettings} from './usage';
+import MuskanGift from './gift';
 import '../app/globals.css';
-createRoot(document.getElementById('root')!).render(new URLSearchParams(location.search).get('view')==='analytics'?<AnalyticsSettings/>:<Home/>);
+// This dedicated entry point never loads analytics, AI, or the public dashboard.
+createRoot(document.getElementById('root')!).render(<MuskanGift/>);
