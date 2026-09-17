@@ -24,3 +24,6 @@ header{background:#fffdf5}.mark{background:#f3bc25;color:#49360d;border-radius:1
 
 /* Keep selected and hovered durations beside their positions on the track. */
 .slider-with-label{position:relative;padding-top:0;padding-bottom:36px;margin-top:15px}.slider-with-label .reply-slider{margin:0;display:block}.slider-hover{position:absolute;transform:translateX(-50%);white-space:nowrap;border-radius:12px;padding:9px 12px;font-size:13px;pointer-events:none}.slider-hover{bottom:0;background:#fff1bd;color:#76500b;border:1px solid #ecdfb9}.slider-help{display:block;margin-top:12px}.reply-slider:focus-visible{outline:3px solid #bc8510;outline-offset:4px}
+
+/* Small cups reward each reply window without turning the page into a scoreboard. */
+.reply-cup{font-size:18px;flex-shrink:0}.dial-cup{font-size:22px;margin-left:8px}.reply-insight{background:#fff5d4;border-radius:18px;padding:18px 20px;margin-top:24px}.reply-insight p{margin:0;line-height:1.7;font-size:14px}.reply-insight p+p{margin-top:5px;color:#786b50}.slider-race-note{font-size:13px;line-height:1.7;text-align:center;color:#786b50;margin:20px 0 0}.reply-stop>div{flex-wrap:wrap;justify-content:flex-end}.reply-stop>div small{white-space:nowrap}@media(max-width:500px){.reply-cup{font-size:16px}.reply-stop{gap:6px}.reply-stop>div{gap:6px}}

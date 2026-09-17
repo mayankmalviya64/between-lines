@@ -4,7 +4,7 @@ import assert from 'node:assert/strict';
 import ts from 'typescript';
 const source=await readFile(new URL('../lib/gift-patterns.ts',import.meta.url),'utf8');
 const compiled=ts.transpileModule(source,{compilerOptions:{target:ts.ScriptTarget.ES2022,module:ts.ModuleKind.ESNext}}).outputText;
-const {cleanGiftChat,replyBuckets,giftPatterns,repliesWithin,snapReplyMinutes,cumulativeReplyRows}=await import('data:text/javascript;base64,'+Buffer.from(compiled).toString('base64'));
+const {cleanGiftChat,replyBuckets,giftPatterns,repliesWithin,snapReplyMinutes,cumulativeReplyRows,replyRace,replyRaceInsight}=await import('data:text/javascript;base64,'+Buffer.from(compiled).toString('base64'));
 test('reply bands count every boundary once',()=>{
  const replies=[0,.99,1,4.99,5,9.99,10,29.99,30,119.99,120,360];
  assert.deepEqual(replyBuckets(replies).map(b=>b.count),[2,2,2,2,2,2]);
@@ -47,4 +47,13 @@ test('card rows are cumulative and match slider percentages at every preset',()=
  assert.deepEqual(rows.map(row=>row.percent),[22.2,44.4,55.6,66.7,77.8,88.9,100]);
  for(const row of rows){const slider=repliesWithin(replies,row.minutes);assert.equal(row.count,slider.count);assert.equal(row.percent,slider.percent);}
  assert(cumulativeReplyRows([]).every(row=>row.count===0&&row.percent===null));
+});
+
+test('reply cups compare rates, handle ties, and change with the window',()=>{
+ const people=[{who:'Muskan',replies:[0,10,10]},{who:'Mayank',replies:[2,2,2,2]}];
+ assert.deepEqual(replyRace(people,1),{winner:'Muskan',tied:false});
+ assert.deepEqual(replyRace(people,5),{winner:'Mayank',tied:false});
+ assert.deepEqual(replyRace(people,10),{winner:null,tied:true});
+ assert.deepEqual(replyRace([{who:'Muskan',replies:[]},people[1]],5),{winner:null,tied:false});
+ assert.match(replyRaceInsight(people),/Muskan leads at 1 minute; Mayank leads at 5 minutes/);
 });

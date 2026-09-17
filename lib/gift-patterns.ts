@@ -37,3 +37,17 @@ export function snapReplyMinutes(minutes:number){
  const bounded=Math.max(1,Math.min(360,minutes));
  return bounded<=2?Math.round(bounded):Math.max(5,Math.round(bounded/5)*5);
 }
+
+// Compare the displayed percentages so a rounded tie never gets a misleading trophy.
+export function replyRace(people:{who:string;replies:number[]}[],minutes:number){
+ const scores=people.map(person=>({who:person.who,...repliesWithin(person.replies,minutes)}));
+ if(scores.length!==2||scores.some(score=>score.percent===null))return {winner:null,tied:false};
+ if(scores[0].percent===scores[1].percent)return {winner:null,tied:true};
+ return {winner:scores[0].percent!>scores[1].percent!?scores[0].who:scores[1].who,tied:false};
+}
+export function replyRaceInsight(people:{who:string;replies:number[]}[]){
+ const windows=[1,5,10,30];
+ if(people.length!==2||people.some(person=>!person.replies.length))return 'A little more conversation before we hand out the cups. ⏳';
+ const leads=people.map(person=>{const wins=windows.filter(minutes=>replyRace(people,minutes).winner===person.who);return wins.length?`${person.who} leads at ${wins.join(', ')} ${wins.length===1&&wins[0]===1?'minute':'minutes'}`:null;}).filter(Boolean);
+ return leads.length?leads.join('; ')+'.':'A photo finish: you’re tied at 1, 5, 10 and 30 minutes. 🏁';
+}
