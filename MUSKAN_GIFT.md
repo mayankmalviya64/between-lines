@@ -17,4 +17,5 @@ must be enabled for unlock to survive a refresh. Anyone using an unlocked browse
 can read the gift during that window; anyone knowing the passcode can unlock it.
 This is passcode protection, not identity verification or account authentication.
 
-The current encrypted payload is a preview letter; the chat has not been supplied.
+The encrypted payload contains the supplied chat and a welcome letter.
+Live address: https://mayankmalviya64.github.io/muskan-is-very-busyy/
