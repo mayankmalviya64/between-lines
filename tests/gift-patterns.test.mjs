@@ -53,7 +53,11 @@ test('reply cups compare rates, handle ties, and change with the window',()=>{
  const people=[{who:'Muskan',replies:[0,10,10]},{who:'Mayank',replies:[2,2,2,2]}];
  assert.deepEqual(replyRace(people,1),{winner:'Muskan',tied:false});
  assert.deepEqual(replyRace(people,5),{winner:'Mayank',tied:false});
- assert.deepEqual(replyRace(people,10),{winner:null,tied:true});
+ assert.deepEqual(replyRace(people,10),{winner:'Mayank',tied:false});
+ assert.deepEqual(replyRace([{who:'Muskan',replies:[1,2]},{who:'Mayank',replies:[1,2]}],10),{winner:null,tied:true});
+ // One-hour fixture: both show 94%, but Muskan has more replies in the window.
+ const hour=[{who:'Muskan',replies:[...Array(913).fill(1),...Array(56).fill(120)]},{who:'Mayank',replies:[...Array(898).fill(1),...Array(53).fill(120)]}];
+ assert.deepEqual(replyRace(hour,60),{winner:'Muskan',tied:false});
  assert.deepEqual(replyRace([{who:'Muskan',replies:[]},people[1]],5),{winner:null,tied:false});
- assert.match(replyRaceInsight(people),/Muskan leads at 1 minute; Mayank leads at 5 minutes/);
+ assert.match(replyRaceInsight(people),/Muskan leads at 1 minute; Mayank leads at 5, 10, 30 minutes/);
 });

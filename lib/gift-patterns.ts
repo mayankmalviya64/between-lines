@@ -38,11 +38,14 @@ export function snapReplyMinutes(minutes:number){
  return bounded<=2?Math.round(bounded):Math.max(5,Math.round(bounded/5)*5);
 }
 
-// Compare the displayed percentages so a rounded tie never gets a misleading trophy.
+// Rank by the whole percentage shown on screen, then by reply count when it ties.
 export function replyRace(people:{who:string;replies:number[]}[],minutes:number){
  const scores=people.map(person=>({who:person.who,...repliesWithin(person.replies,minutes)}));
  if(scores.length!==2||scores.some(score=>score.percent===null))return {winner:null,tied:false};
- if(scores[0].percent===scores[1].percent)return {winner:null,tied:true};
+ if(scores[0].percent===scores[1].percent){
+  if(scores[0].count===scores[1].count)return {winner:null,tied:true};
+  return {winner:scores[0].count>scores[1].count?scores[0].who:scores[1].who,tied:false};
+ }
  return {winner:scores[0].percent!>scores[1].percent!?scores[0].who:scores[1].who,tied:false};
 }
 export function replyRaceInsight(people:{who:string;replies:number[]}[]){
