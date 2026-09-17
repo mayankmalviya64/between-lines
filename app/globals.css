@@ -57,3 +57,9 @@ header{background:#fffdf5}.mark{background:#f3bc25;color:#49360d;border-radius:1
 
 /* Keep the garden key together on laptops; allow natural wrapping on phones. */
 @media(min-width:801px){.garden-legend{flex-wrap:nowrap;flex-shrink:0}}
+
+/* The closing tagline sits beside its heading and wraps below on phones. */
+.words-heading{display:flex;justify-content:space-between;align-items:center;gap:12px 24px;flex-wrap:wrap}
+.words-heading h2{margin:0}
+.words-heading>small{margin-left:auto;text-align:right;line-height:1.6;max-width:420px}
+@media(max-width:600px){.words-heading>small{margin-left:0;text-align:left;max-width:none}}
