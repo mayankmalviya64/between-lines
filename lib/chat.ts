@@ -29,11 +29,14 @@ export function parseChat(raw:string,order:string='AUTO'):Message[]{
  for(const line of cleanExport(raw).split(/\r\n|\n|\r/)){
  const m=line.match(header);if(!m){if(current)current.text+='\n'+line;continue;}current=undefined;
  const at=timestamp(m,resolved);if(at===null)throw Error('Some dates do not match the selected format. Choose Auto-detect or another date order.');
- const p=m[8].indexOf(': ');if(p<1){if(/(?:created (?:this |the )?group|added you|you were added|changed the group (?:description|name|icon))/i.test(m[8]))throw Error('Group chat detected. Please choose a personal DM export.');continue;}
+ const p=m[8].indexOf(': ');if(p<1){if(/(?:created (?:this |the )?group|added you|you were added|changed the group (?:description|name|icon))/i.test(m[8]))throw Error('Group chat detected. Upload rejected — only personal DMs are allowed.');continue;}
  current={at,who:m[8].slice(0,p).trim(),text:m[8].slice(p+2)};out.push(current);
  }
  if(!out.length)throw Error('No messages found. Choose a WhatsApp exported .txt chat, without media.');
- if(new Set(out.map(m=>m.who)).size!==2)throw Error('This version supports exactly two participants. Group chats and one-sided exports are not supported.');
+ // More than two distinct senders identifies a group, even if its creation notice is absent.
+ const participants=new Set(out.map(m=>m.who)).size;
+ if(participants>2)throw Error('Group chat detected. Upload rejected — only personal DMs are allowed.');
+ if(participants!==2)throw Error('This version supports exactly two participants. One-sided exports are not supported.');
  return out.sort((a,b)=>a.at-b.at);
 }
 export const isText=(s:string)=>!/(<media omitted>|image omitted|video omitted|audio omitted|sticker omitted|document omitted|contact card omitted|this message was deleted|you deleted this message|<attached:)/i.test(s);
