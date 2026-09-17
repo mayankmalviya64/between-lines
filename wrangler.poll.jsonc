@@ -1,0 +1,10 @@
+{
+ "name":"muskan-caption-poll",
+ "main":"worker/poll.ts",
+ "compatibility_date":"2026-09-17",
+ "workers_dev":true,
+ "vars":{"EMAIL_READY":"false"},
+ "durable_objects":{"bindings":[{"name":"MAILBOX","class_name":"PollMailbox"}]},
+ "migrations":[{"tag":"v1","new_sqlite_classes":["PollMailbox"]}],
+ "observability":{"enabled":false}
+}
