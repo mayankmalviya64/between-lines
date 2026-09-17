@@ -64,7 +64,9 @@ export default {
         // Do not log errors containing model prompts or chat text.
         return reply({error: 'The AI service is temporarily unavailable. Please try later.'}, 503);
       }
-      const output = (generated as {response?: unknown})?.response;
+      // GPT-OSS returns the final answer in choices, separately from reasoning.
+      const completion = generated as {response?: unknown; choices?: {message?: {content?: unknown}}[]};
+      const output = completion?.choices?.[0]?.message?.content ?? completion?.response;
       try {
         const insights = parseInsights(typeof output === 'string' ? JSON.parse(output) : output);
         return reply({insights});

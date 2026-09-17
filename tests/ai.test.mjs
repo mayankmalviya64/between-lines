@@ -16,7 +16,7 @@ const recent = () => ({at: Date.now() - 3600000, who: 'A', text: 'How did your p
 const valid = {insights: [{title: 'A thoughtful check-in', observation: 'A asks about the presentation.', evidence: ['How did your presentation go?'], suggestion: 'Ask a follow-up.', uncertainty: 'One message does not establish a broader pattern.'}]};
 function environment() {
   const calls = {ai: 0, budget: 0};
-  return {calls, env: {ALLOWED_ORIGIN: origin, AI: {async run() {calls.ai++; return {response: JSON.stringify(valid)};}}, AI_BUDGET: {idFromName: value => value, get: () => ({async fetch() {calls.budget++; return new Response(null, {status: 204});}})}}};
+  return {calls, env: {ALLOWED_ORIGIN: origin, AI: {async run() {calls.ai++; return {choices: [{message: {content: JSON.stringify(valid), reasoning: "Private reasoning must not be returned"}}]};}}, AI_BUDGET: {idFromName: value => value, get: () => ({async fetch() {calls.budget++; return new Response(null, {status: 204});}})}}};
 }
 
 test('three calendar months clamp month ends, including leap years', () => {
