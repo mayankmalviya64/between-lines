@@ -14,7 +14,8 @@ export function initiativeDays(chat:Message[],start:number,end:number) {
   const key=dateKey(new Date(message.at));
   const day=days.get(key)??{active:true,starts:new Map<string,number>()};
   const previous=messages[index-1];
-  if(!previous||message.at-previous.at>=6*3600000){
+  // Sorted messages ensure only the earliest conversation start claims this day.
+  if(day.starts.size===0&&(!previous||message.at-previous.at>=6*3600000)){
    day.starts.set(message.who,(day.starts.get(message.who)??0)+1);
   }
   days.set(key,day);
@@ -53,6 +54,6 @@ export function InitiativeCalendar({chat,people,avatars}:{chat:Message[];people:
     </div>
    </section>;
   })}</div>
-  <small>A new conversation begins after at least six hours of silence. Both avatars appear when both people initiate on the same day; a small number shows multiple starts. The first message in the export counts as a start. Reply-time and dashboard date filters do not change this fixed three-month calendar. Blank days may also reflect missing export history.</small>
+  <small>A new conversation begins after at least six hours of silence. Only the person who initiates the first conversation that day is shown; later starts do not change the avatar. The first message in the export counts as a start. Reply-time and dashboard date filters do not change this fixed three-month calendar. Blank days may also reflect missing export history.</small>
  </div>;
 }
