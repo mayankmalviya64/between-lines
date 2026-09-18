@@ -1,10 +1,11 @@
+import type {ReactNode} from 'react';
 import {useState} from 'react';
 import {duration} from '../lib/chat';
 
 type Person = {who:string; replies:number[]; median:number|null};
 const windows = [1,5,10,30,60,120,360];
 
-export function ReplyExpress({people,avatars}:{people:Person[];avatars:string[]}) {
+export function ReplyExpress({people,avatars,renderIdentity}:{people:Person[];avatars:string[];renderIdentity:(index:number)=>ReactNode}) {
  const [minutes,setMinutes] = useState(5);
  // Reuse filtered replies so the tickets and dials honour every dashboard setting.
  function tally(person:Person,window:number) {
@@ -15,7 +16,7 @@ export function ReplyExpress({people,avatars}:{people:Person[];avatars:string[]}
   <h2>The reply express 🚀</h2>
   <small>How quickly each person returns · current date, excluded-period and long-gap filters apply.</small>
   <div className="reply-people">{people.map((person,index)=><div className={'reply-person reply-person-'+index} key={person.who}>
-   <div className="reply-person-heading"><span aria-hidden="true">{avatars[index]}</span><div><h3>{person.who}</h3><small>{person.replies.length} eligible replies</small></div></div>
+   <div className="reply-person-heading"><div>{renderIdentity(index)}<small>{person.replies.length} eligible replies</small></div></div>
    <div className="reply-ticket"><small>Typical reply · median</small><strong>{duration(person.median)}</strong></div>
    <div className="reply-stops">{windows.map(window=>{const value=tally(person,window);return <div className="reply-stop" key={window}><span className="stop-icon" aria-hidden="true">{window<=5?'⚡':window<=30?'🚲':'🚂'}</span><span>Within {window<60?window+' min':window/60+' hr'}</span><div><strong>{value.percent===null?'—':value.percent+'%'}</strong><small>{value.count} replies</small></div></div>;})}</div>
   </div>)}</div>
