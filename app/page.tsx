@@ -12,8 +12,9 @@ function Pick({label,value,options,onChange}:{label:string,value:string,options:
 function track(event:string){void fetch('/api/events',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({event}),keepalive:true}).catch(()=>{});}
 export default function Home(){
  const [chat,setChat]=useState<Message[]>([]),[demo,setDemo]=useState(false),[kind,setKind]=useState('Friend'),[period,setPeriod]=useState('All Time'),[order,setOrder]=useState('Auto-detect'),[gap,setGap]=useState('6 hours'),[night,setNight]=useState(true),[excludeStart,setExcludeStart]=useState('23:00'),[excludeEnd,setExcludeEnd]=useState('07:00'),[customStart,setCustomStart]=useState(''),[customEnd,setCustomEnd]=useState(''),[error,setError]=useState(''),[busy,setBusy]=useState(false),[raw,setRaw]=useState(''),[filename,setFilename]=useState('');
- // Avatars are chosen by the visitor; names never imply a gender.
- const [avatars,setAvatars]=useState(['🧑🏻','🧑🏻']),[selectedDay,setSelectedDay]=useState<string|null>(null);
+ // Distinct default avatars keep the two participants visible in the token chart.
+ // Visitors can change either avatar; participant names never determine gender.
+ const [avatars,setAvatars]=useState(['👦🏻','🙎🏻‍♀️']),[selectedDay,setSelectedDay]=useState<string|null>(null);
  const input=useRef<HTMLInputElement>(null);
  useEffect(()=>{track('page_view');},[]);
  useEffect(()=>{const context=(document as any).modelContext;if(!context?.registerTool)return;const controller=new AbortController();Promise.resolve(context.registerTool({name:'set_conversation_period',description:'Set the visible date filter for the conversation dashboard.',inputSchema:{type:'object',properties:{period:{type:'string',enum:periods.filter(p=>p!=='Custom Range')}},required:['period'],additionalProperties:false},annotations:{readOnlyHint:false},execute:async(v:any)=>{if(!periods.includes(v.period)||v.period==='Custom Range')throw Error('Unsupported period');setPeriod(v.period);track('filter_used');return {period:v.period};}},{signal:controller.signal})).catch(()=>{});return()=>controller.abort();},[]);
