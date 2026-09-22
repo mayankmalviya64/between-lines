@@ -7,7 +7,7 @@ import {parseChat,analyse,type Message} from '../lib/chat';
 type Gift={welcome:string;note:string;chat?:string;dateOrder?:string;pollToken?:string;pollFormId?:string};
 const storageKey='muskan-gift-unlock-v1';
 const accessRevoked=true;
-const revokedMessage="Hey Muskan, good to see you back! Unfortunately, your access card has been revoked, so you’re no longer authorized to access any of Mayank’s creations—including this one!";
+const revokedMessage='Hey Muskan, good to see you back! Unfortunately, your access card has been recently revoked. You are no longer authorized to access any of "Mayank’s Creations💡✨" (including this one)!';
 const incorrectPasswordMessage='This is a private site created exclusively for someone. Please enter the correct password if you believe you are that person!';
 // Read the export's calendar date directly so time zones cannot shift the day.
 function gardenDate(date:string){
